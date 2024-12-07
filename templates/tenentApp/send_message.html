@@ -1,0 +1,392 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send a Message</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <style>
+        .message-container {
+            margin-top: 100px;
+            padding: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .message-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #d63031;
+            position: relative;
+        }
+
+        .message-header:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: #e17055;
+            margin: 15px auto;
+        }
+
+        .message-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-top {
+            background: linear-gradient(45deg, #d63031, #e17055);
+            color: white;
+            padding: 20px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-top i {
+            margin-right: 10px;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .property-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .property-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            color: #2d3436;
+        }
+
+        .property-item i {
+            width: 24px;
+            color: #e17055;
+            margin-right: 10px;
+        }
+
+        .message-form {
+            margin-top: 20px;
+        }
+
+        .form-label {
+            color: #2d3436;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .message-textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .message-textarea:focus {
+            outline: none;
+            border-color: #e17055;
+            box-shadow: 0 0 0 3px rgba(225, 112, 85, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .send-btn, .back-btn {
+            position: relative;
+            padding: 12px 35px;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .send-btn::before, .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            z-index: -1;
+            transition: all 0.6s ease;
+        }
+
+        .send-btn {
+            background: linear-gradient(45deg, #00b894, #00d1a0);
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.2);
+        }
+
+        .send-btn::before {
+            background: linear-gradient(45deg, #00d1a0, #00b894);
+            opacity: 0;
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #d63031, #e17055);
+            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.2);
+        }
+
+        .back-btn::before {
+            background: linear-gradient(45deg, #e17055, #d63031);
+            opacity: 0;
+        }
+
+        .send-btn:hover, .back-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            color: white;
+            text-decoration: none;
+        }
+
+        .send-btn:hover::before, .back-btn:hover::before {
+            opacity: 1;
+            transform: rotate(180deg);
+        }
+
+        .send-btn:active, .back-btn:active {
+            transform: translateY(2px);
+        }
+
+        .send-btn i, .back-btn i {
+            margin-right: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover i {
+            animation: sendPlane 1s ease infinite;
+        }
+
+        .back-btn:hover i {
+            animation: bounceLeft 1s ease infinite;
+        }
+
+        @keyframes sendPlane {
+            0% { transform: translateX(0) rotate(0); }
+            25% { transform: translateX(3px) rotate(5deg); }
+            75% { transform: translateX(-3px) rotate(-5deg); }
+            100% { transform: translateX(0) rotate(0); }
+        }
+
+        @keyframes bounceLeft {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-5px); }
+        }
+
+        .error-container {
+            background: #fff5f5;
+            border-left: 4px solid #d63031;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .error-title {
+            color: #d63031;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .error-title i {
+            margin-right: 10px;
+        }
+
+        .error-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .error-list li {
+            color: #2d3436;
+            margin-bottom: 5px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .error-list li:before {
+            content: '•';
+            color: #d63031;
+            position: absolute;
+            left: 0;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'Navbar/tenentNavBar.html' %}
+
+    <div class="message-container">
+        <h1 class="message-header">Send a Message</h1>
+
+        <div class="message-card">
+            <div class="card-top">
+                <i class="fas fa-envelope"></i>
+                Messaging {{ property.owner.username }}
+            </div>
+
+            <div class="card-content">
+                <div class="property-details">
+                    <div class="property-item">
+                        <i class="fas fa-home"></i>
+                        <span><strong>Property:</strong> {{ property.title }}</span>
+                    </div>
+                    <div class="property-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span><strong>Location:</strong> {{ property.location }}</span>
+                    </div>
+                    <div class="property-item">
+                        <i class="fas fa-tag"></i>
+                        <span><strong>Price:</strong> ${{ property.price }}</span>
+                    </div>
+                </div>
+
+                <form method="post" class="message-form">
+                    {% csrf_token %}
+                    <label class="form-label">
+                        <i class="fas fa-pencil-alt"></i> Your Message
+                    </label>
+                    {{ form.content }}
+
+                    <div class="btn-group">
+                        <button type="submit" class="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Message
+                        </button>
+                        <a href="{% url 'tenentapp:property_detail' property.id %}" class="back-btn">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if form.errors %}
+        <div class="error-container">
+            <h4 class="error-title">
+                <i class="fas fa-exclamation-circle"></i>
+                There were some errors:
+            </h4>
+            <ul class="error-list">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Style the textarea
+            const textarea = document.querySelector('textarea');
+            textarea.classList.add('message-textarea');
+
+            // Form submission animation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const submitBtn = this.querySelector('.send-btn');
+                submitBtn.classList.add('loading');
+                submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending...';
+            });
+
+            // Ripple effect for buttons
+            const buttons = document.querySelectorAll('.send-btn, .back-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const ripple = document.createElement('span');
+                    ripple.className = 'ripple';
+                    ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+                    ripple.style.left = x - ripple.offsetWidth/2 + 'px';
+                    ripple.style.top = y - ripple.offsetHeight/2 + 'px';
+
+                    this.appendChild(ripple);
+
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            });
+
+            // Hover animations for icons
+            buttons.forEach(button => {
+                button.addEventListener('mouseover', function() {
+                    const icon = this.querySelector('i');
+                    icon.style.transform = 'scale(1.2)';
+                });
+
+                button.addEventListener('mouseout', function() {
+                    const icon = this.querySelector('i');
+                    icon.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

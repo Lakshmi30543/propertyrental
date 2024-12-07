@@ -1,0 +1,28 @@
+{% load static %}
+<header>
+    <div class="logo">
+        <a href="{% url 'adminapp:homepage' %}">
+            <img src="{% static 'images/logo.png' %}" alt="PS6 Logo">
+        </a>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="{% url 'adminapp:homepage' %}">Home</a></li>
+            <li><a href="{% url 'ownerapp:property_list' %}">Find Properties</a></li>
+            <li><a href="{% url 'adminapp:upload_property' %}">Upload Property</a></li><!-- Changed space to hyphen -->
+            <li><a href="{% url 'adminapp:dashboard' %}">User Profiles</a></li>
+            <li><a href="{% url 'adminapp:admin_messages' %}">Messages</a></li>
+        </ul>
+    </nav>
+    <div class="auth-buttons">
+        {% if user.is_authenticated %}
+            <span class="welcome-message">Welcome {{ user.username }}</span>
+            <form action="{% url 'adminapp:logout_view' %}" method="POST" style="atdisplay:inline;">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'adminapp:login_or_register' %}" class="login-btn">Login/Register</a>
+        {% endif %}
+    </div>
+</header>

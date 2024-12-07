@@ -1,0 +1,271 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Profile</title>
+    <link rel="stylesheet" href="{% static 'css/ownerApp/ownerProfile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    {% include 'Navbar/ownerNavBar.html' %}
+
+    <div class="main-container">
+        <div class="profile-header">
+            <h1>Profile Settings</h1>
+            <p>Manage your account settings and preferences</p>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Left Sidebar -->
+            <div class="sidebar">
+                <div class="profile-summary">
+                    <div class="profile-pic">
+                        {% if profile.profile_image %}
+                            <img src="{{ profile.profile_image.url }}" alt="Profile Photo">
+                        {% else %}
+                            <div class="profile-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <h3>{{ request.user.get_full_name }}</h3>
+                    <span class="role">Property Owner</span>
+                </div>
+
+                <div class="nav-menu">
+                    <button class="nav-btn active" data-tab="profile">
+                        <i class="fas fa-user"></i>
+                        <span>Profile Details</span>
+                    </button>
+                    <button class="nav-btn" data-tab="security">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Security</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="main-content">
+                <!-- Profile Section -->
+                <div id="profile-section" class="content-section active">
+                    <div class="card">
+                        <form id="profileForm" class="form" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <div class="photo-upload">
+                                <div class="current-photo">
+                                    {% if profile.profile_image %}
+                                        <img src="{{ profile.profile_image.url }}" alt="Profile" id="photoPreview">
+                                    {% else %}
+                                        <div class="photo-placeholder">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="upload-controls">
+                                    <label for="{{ form.profile_image.id_for_label }}" class="upload-btn">
+                                        <i class="fas fa-camera"></i>
+                                        Change Photo
+                                    </label>
+                                    {{ form.profile_image }}
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Email Address <span class="required">*</span></label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <div class="error">{{ form.email.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Phone Number <span class="required">*</span></label>
+                                    {{ form.phone_number }}
+                                    {% if form.phone_number.errors %}
+                                        <div class="error">{{ form.phone_number.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label>Address <span class="required">*</span></label>
+                                    {{ form.address }}
+                                    {% if form.address.errors %}
+                                        <div class="error">{{ form.address.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-reset" onclick="resetForm('profileForm')">
+                                    <i class="fas fa-undo"></i>
+                                    Reset
+                                </button>
+                                <button type="submit" name="update_profile" class="btn-save">
+                                    <i class="fas fa-check"></i>
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security Section -->
+                <div id="security-section" class="content-section">
+                    <div class="card">
+                        <form id="passwordForm" class="form" method="POST">
+                            {% csrf_token %}
+                            {% for field in password_form %}
+                                <div class="form-group">
+                                    <label>{{ field.label }} <span class="required">*</span></label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="error">{{ field.errors.0 }}</div>
+                                    {% endif %}
+                                    {% if field.help_text %}
+                                        <div class="help-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-reset" onclick="resetForm('passwordForm')">
+                                    <i class="fas fa-undo"></i>
+                                    Reset
+                                </button>
+                                <button type="submit" name="change_password" class="btn-save">
+                                    <i class="fas fa-key"></i>
+                                    Update Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="toast-container">
+        {% for message in messages %}
+        <div class="toast {{ message.tags }}">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+<script>
+    // ownerProfile.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab Navigation
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    navButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and sections
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            contentSections.forEach(section => section.classList.remove('active'));
+
+            // Add active class to clicked button and corresponding section
+            button.classList.add('active');
+            document.getElementById(`${button.dataset.tab}-section`).classList.add('active');
+        });
+    });
+
+    // Image Preview
+    const imageInput = document.querySelector('input[type="file"]');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                const preview = document.getElementById('photoPreview');
+
+                reader.onload = function(e) {
+                    if (preview) {
+                        preview.src = e.target.result;
+                    }
+                }
+
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+    }
+
+    // Form Reset Function
+    window.resetForm = function(formId) {
+        const form = document.getElementById(formId);
+        if (form) {
+            // Reset all input fields
+            const inputs = form.querySelectorAll('input:not([type="file"]), textarea');
+            inputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('error');
+            });
+
+            // Reset file input if exists
+            const fileInput = form.querySelector('input[type="file"]');
+            if (fileInput) {
+                fileInput.value = '';
+            }
+
+            // Reset photo preview if exists
+            const photoPreview = document.getElementById('photoPreview');
+            const placeholder = document.querySelector('.photo-placeholder');
+            if (photoPreview) {
+                photoPreview.style.display = 'none';
+                if (placeholder) {
+                    placeholder.style.display = 'flex';
+                }
+            }
+
+            // Remove error messages
+            const errors = form.querySelectorAll('.error');
+            errors.forEach(error => error.remove());
+        }
+    };
+
+    // Toast Messages
+    const toasts = document.querySelectorAll('.toast');
+    toasts.forEach(toast => {
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease forwards';
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }, 3000);
+    });
+
+    // Form Validation
+    const forms = document.querySelectorAll('.form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('error');
+
+                    // Add error message
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error';
+                    errorDiv.textContent = 'This field is required';
+                    field.parentElement.appendChild(errorDiv);
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>

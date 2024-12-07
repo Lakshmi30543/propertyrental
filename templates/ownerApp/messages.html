@@ -1,0 +1,136 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Messages</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ownerApp/messages.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    {% include 'Navbar/ownerNavBar.html' %}
+
+    <div class="messages-container">
+        <div class="messages-header">
+            <h1>Messages from Tenants</h1>
+            <div class="header-line"></div>
+        </div>
+
+        {% if messages %}
+            <div class="messages-list">
+                {% for message in messages %}
+                    <div class="message-card">
+                        <div class="message-header">
+                            <div class="user-info">
+                                <i class="fas fa-user-circle"></i>
+                                <h5>{{ message.tenant.username }}</h5>
+                            </div>
+                            <span class="timestamp">
+                                <i class="far fa-clock"></i>
+                                {{ message.timestamp }}
+                            </span>
+                        </div>
+
+                        <div class="property-info">
+                            <div>
+                                <i class="fas fa-home"></i>
+                                <strong>Property:</strong> {{ message.property.title }}
+                            </div>
+                            <div>
+                                <i class="fas fa-map-marker-alt"></i>
+                                <strong>Location:</strong> {{ message.property.location }}
+                            </div>
+                        </div>
+
+                        <div class="message-content">
+                            <p>{{ message.content }}</p>
+                        </div>
+
+                        {% if message.replies.all %}
+                            <div class="replies-section">
+                                <h6><i class="fas fa-reply"></i> Replies</h6>
+                                <div class="replies-list">
+                                    {% for reply in message.replies.all %}
+                                        <div class="reply-item">
+                                            <div class="reply-header">
+                                                <strong>
+                                                    <i class="fas fa-user"></i>
+                                                    {% if reply.owner %}
+                                                        {{ reply.owner.username }}
+                                                    {% else %}
+                                                        {{ reply.tenant.username }}
+                                                    {% endif %}
+                                                </strong>
+                                                <small>{{ reply.timestamp }}</small>
+                                            </div>
+                                            <p>{{ reply.content }}</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="reply-section">
+                            <button class="reply-btn" onclick="toggleReplyForm('replyForm{{ message.id }}')">
+                                <i class="fas fa-reply"></i> Reply
+                            </button>
+
+                            <div id="replyForm{{ message.id }}" class="reply-form">
+                                <form action="{% url 'ownerapp:reply_to_tenant' message.id %}" method="post">
+                                    {% csrf_token %}
+                                    <textarea class="form-control" name="content" rows="4" placeholder="Type your reply..."></textarea>
+                                    <button type="submit" class="send-btn">
+                                        <i class="fas fa-paper-plane"></i> Send Reply
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-messages">
+                <i class="fas fa-inbox"></i>
+                <p>You have no messages at the moment.</p>
+            </div>
+        {% endif %}
+
+        <a href="{% url 'ownerapp:ownerhomepage' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function toggleReplyForm(formId) {
+    const form = document.getElementById(formId);
+    form.classList.toggle('active');
+}
+
+// Add smooth scroll and fade-in animations
+document.addEventListener('DOMContentLoaded', function() {
+    const messageCards = document.querySelectorAll('.message-card');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    messageCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'all 0.5s ease';
+        observer.observe(card);
+    });
+});
+    </script>
+</body>
+</html>

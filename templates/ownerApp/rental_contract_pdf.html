@@ -1,0 +1,145 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ agreement_type|capfirst }} Agreement</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            margin: 40px;
+            line-height: 1.8;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            color: #2d3436;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 30px;
+            text-decoration: none;
+            color: #d63031;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #d63031;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 25px;
+            color: #e17055;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .highlight {
+            color: #d63031;
+            font-weight: 600;
+        }
+
+        .date-highlight {
+            color: #0984e3;
+            font-weight: 600;
+        }
+
+        .address-highlight {
+            color: #00b894;
+            font-weight: 600;
+        }
+
+        .amount-highlight {
+            color: #6c5ce7;
+            font-weight: 600;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            padding-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+
+        .signature-block {
+            text-align: center;
+            width: 45%;
+        }
+
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 30px;
+            padding-top: 5px;
+            font-weight: 500;
+        }
+
+        .signature-block p {
+            text-align: center;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    {% block content %}
+
+    {% if agreement_type == 'rental' %}
+    <h1>Residential Rental Agreement</h1>
+
+    <h3>Agreement Overview</h3>
+    <p>This Rental Agreement ("Agreement") is made on <span class="date-highlight">{{ start_date }}</span>, between <span class="highlight">{{ owner_name }}</span> ("Landlord") and <span class="highlight">{{ tenant_name }}</span> ("Tenant"). This agreement outlines the rental terms for the property located at <span class="address-highlight">{{ property_address }}</span>.</p>
+
+    <h3>Rental Payment Terms</h3>
+    <p>The Tenant agrees to pay <span class="amount-highlight">${{ rental_amount }}</span> per month. Rent is due by the 1st of each month. Late fees of $50 apply after the 5th day of each month.</p>
+
+    <h3>Lease Term</h3>
+    <p>The lease begins on <span class="date-highlight">{{ start_date }}</span> and ends on <span class="date-highlight">{{ end_date }}</span>. Extensions require written agreement from both parties.</p>
+
+    <h3>Security Deposit</h3>
+    <p>A security deposit of <span class="amount-highlight">${{ security_deposit }}</span> is required. This deposit will be refunded at lease end, subject to any deductions for damages.</p>
+
+    {% elif agreement_type == 'sale' %}
+    <h1>Real Estate Sale Agreement</h1>
+
+    <h3>Agreement Overview</h3>
+    <p>This Sale Agreement ("Agreement") is entered on <span class="date-highlight">{{ sale_date }}</span>, between <span class="highlight">{{ owner_name }}</span> ("Seller") and <span class="highlight">{{ tenant_name }}</span> ("Buyer"). The Seller agrees to sell the property located at <span class="address-highlight">{{ property_address }}</span> under the following conditions:</p>
+
+    <h3>Sale Price and Payment Terms</h3>
+    <p>The sale price of the property is <span class="amount-highlight">${{ sale_price }}</span>. Payment terms require a deposit and the balance due on the closing date.</p>
+
+    <h3>Closing Date and Transfer</h3>
+    <p>The ownership will be transferred on <span class="date-highlight">{{ sale_date }}</span>, upon full payment. The Buyer accepts the property "as is" at the time of sale.</p>
+    {% endif %}
+
+    <h3>Maintenance Responsibilities</h3>
+    <p>The Tenant is responsible for keeping the property in good condition and notifying the Landlord of necessary repairs. The Landlord handles general maintenance, except repairs caused by Tenant's negligence.</p>
+
+    <h3>Governing Law</h3>
+    <p>This Agreement is governed by the laws of the State. Any disputes shall be resolved in accordance with applicable State laws.</p>
+
+    <div class="signature-section">
+        <div class="signature-block">
+            <p>Landlord/Seller Signature</p>
+            <p class="signature-line">{{ owner_name }}</p>
+            <p>Date: _____________</p>
+        </div>
+        <div class="signature-block">
+            <p>Tenant/Buyer Signature</p>
+            <p class="signature-line">{{ tenant_name }}</p>
+            <p>Date: _____________</p>
+        </div>
+    </div>
+
+    {% endblock %}
+</body>
+</html>

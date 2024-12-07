@@ -1,0 +1,468 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Messages</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <style>
+        .messages-container {
+            margin-top: 5px;
+            padding: 20px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .messages-header {
+            text-align: center;
+            color: #d63031;
+            margin-bottom: 40px;
+            position: relative;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+
+        .messages-header:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: #e17055;
+            margin: 15px auto;
+        }
+
+        .message-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .message-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .sender-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sender-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #e17055, #d63031);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 10px rgba(225, 112, 85, 0.3);
+        }
+
+        .sender-name {
+            color: #d63031;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .property-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .property-info:hover {
+            background: #f0f0f0;
+            transform: translateX(5px);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #2d3436;
+        }
+
+        .info-item i {
+            width: 25px;
+            color: #e17055;
+            margin-right: 10px;
+        }
+
+        .message-content {
+            color: #2d3436;
+            line-height: 1.6;
+            padding: 15px;
+            background: #fff5f5;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .message-content:hover {
+            background: #ffe5e5;
+            transform: translateX(5px);
+        }
+
+        .timestamp {
+            color: #636e72;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .timestamp i {
+            margin-right: 5px;
+            color: #e17055;
+        }
+
+        .replies-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .replies-header {
+            color: #2d3436;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .replies-header i {
+            margin-right: 8px;
+            color: #e17055;
+        }
+
+        .reply-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            border-left: 3px solid #e17055;
+        }
+
+        .reply-item:hover {
+            transform: translateX(5px);
+            background: #f0f0f0;
+        }
+
+        .reply-btn {
+            background: none;
+            border: none;
+            color: #e17055;
+            padding: 8px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .reply-btn i {
+            margin-right: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .reply-btn:hover {
+            color: #d63031;
+        }
+
+        .reply-btn:hover i {
+            transform: rotate(-45deg);
+        }
+
+        .reply-form {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-top: 15px;
+        }
+
+        .reply-form.active {
+            max-height: 300px;
+        }
+
+        .reply-textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            resize: none;
+            min-height: 100px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .reply-textarea:focus {
+            outline: none;
+            border-color: #e17055;
+            box-shadow: 0 0 0 3px rgba(225, 112, 85, 0.1);
+        }
+
+        .send-reply-btn {
+            background: linear-gradient(45deg, #00b894, #00d1a0);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .send-reply-btn i {
+            margin-right: 8px;
+        }
+
+        .send-reply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.3);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #d63031, #e17055);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-top: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.2);
+        }
+
+        .back-btn i {
+            margin-right: 8px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(214, 48, 49, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .no-messages {
+            text-align: center;
+            padding: 50px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            color: #636e72;
+        }
+
+        .no-messages i {
+            color: #e17055;
+            margin-bottom: 20px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'Navbar/tenentNavBar.html' %}
+
+    <div class="messages-container">
+        <h1 class="messages-header">Messages from Owners</h1>
+
+        {% if tenant_messages %}
+            <div class="messages-list">
+                {% for message in tenant_messages %}
+                    <div class="message-card" data-index="{{ forloop.counter0 }}">
+                        <div class="sender-info">
+                            <div class="sender-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h5 class="sender-name">{{ message.owner.username }}</h5>
+                        </div>
+
+                        <div class="property-info">
+                            <div class="info-item">
+                                <i class="fas fa-home"></i>
+                                <span><strong>Property:</strong> {{ message.property.title }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span><strong>Location:</strong> {{ message.property.location }}</span>
+                            </div>
+                        </div>
+
+                        <div class="message-content">
+                            {{ message.content }}
+                        </div>
+
+                        <div class="timestamp">
+                            <i class="far fa-clock"></i>
+                            {{ message.timestamp }}
+                        </div>
+
+                        {% if message.replies.all %}
+                            <div class="replies-section">
+                                <h6 class="replies-header">
+                                    <i class="fas fa-reply-all"></i>
+                                    Previous Replies
+                                </h6>
+                                {% for reply in message.replies.all %}
+                                    <div class="reply-item">
+                                        <strong>
+                                            {% if reply.owner %}
+                                                {{ reply.owner.username }}
+                                            {% elif reply.tenant %}
+                                                {{ reply.tenant.username }}
+                                            {% else %}
+                                                Anonymous
+                                            {% endif %}
+                                        </strong>:
+                                        {{ reply.content }}
+                                        <div class="timestamp">
+                                            <i class="far fa-clock"></i>
+                                            {{ reply.timestamp }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <button class="reply-btn" onclick="toggleReplyForm({{ message.id }})">
+                            <i class="fas fa-reply"></i>
+                            Reply
+                        </button>
+
+                        <div id="replyForm{{ message.id }}" class="reply-form">
+                            <form action="{% url 'tenentapp:reply_to_owner' message.id %}" method="post">
+                                {% csrf_token %}
+                                <textarea
+                                    class="reply-textarea"
+                                    name="content"
+                                    placeholder="Type your reply..."
+                                    required></textarea>
+                                <button type="submit" class="send-reply-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Send Reply
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-messages">
+                <i class="fas fa-inbox fa-3x"></i>
+                <p>You have no messages at the moment.</p>
+            </div>
+        {% endif %}
+
+        <a href="{% url 'tenentapp:tenenthomepage' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate messages on load
+            const messages = document.querySelectorAll('.message-card');
+            messages.forEach((message) => {
+                const index = message.dataset.index;
+                setTimeout(() => {
+                    message.style.opacity = '1';
+                    message.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add ripple effect to buttons
+            const buttons = document.querySelectorAll('.send-reply-btn, .back-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', createRipple);
+            });
+
+            // Initialize textareas
+            document.querySelectorAll('.reply-textarea').forEach(textarea => {
+                textarea.addEventListener('input', autoResize);
+            });
+        });
+
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            ripple.style.width = ripple.style.height = `${diameter}px`;
+
+            const rect = button.getBoundingClientRect();
+            ripple.style.left = `${event.clientX - rect.left - diameter / 2}px`;
+            ripple.style.top = `${event.clientY - rect.top - diameter / 2}px`;
+
+            button.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        }
+
+        function toggleReplyForm(messageId) {
+            const form = document.getElementById(`replyForm${messageId}`);
+            form.classList.toggle('active');
+
+            if (form.classList.contains('active')) {
+                form.querySelector('textarea').focus();
+                form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function autoResize() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        }
+    </script>
+</body>
+</html>

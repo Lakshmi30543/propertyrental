@@ -1,0 +1,402 @@
+/* Root Variables */
+:root {
+    --primary-color: #C9A769;
+    --secondary-color: #7e3615;
+    --accent-color: #D2A854;
+    --danger-color: #E07777;
+    --success-color: #4CAF50;
+    --background-color: #F3F3F3;
+    --card-background: #FFFFFF;
+    --text-primary: #4A4A4A;
+    --text-secondary: #6A6A6A;
+    --border-color: #D9BBA6;
+    --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Search and Filter Container */
+.search-filter-container {
+    background-color: var(--card-background);
+    padding: 20px;
+    margin: 20px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-sm);
+}
+
+.search-input-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.search-wrapper {
+    position: relative;
+    flex: 7;
+}
+
+.filter-wrapper {
+    position: relative;
+    flex: 3;
+}
+
+.search-icon,
+.filter-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    z-index: 1;
+}
+
+/* Input Fields */
+input[type="text"],
+select {
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    border: 2px solid var(--border-color);
+    border-radius: 30px;
+    font-size: 1rem;
+    transition: var(--transition);
+    background-color: white;
+}
+
+input[type="text"]:focus,
+select:focus {
+    border-color: var(--secondary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(126, 54, 21, 0.1);
+}
+
+/* Property List Grid */
+.property-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 1800px;
+}
+
+/* Property Card */
+.property-card {
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    max-width: 320px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Property Image Container */
+.property-image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 66.67%;
+    overflow: hidden;
+}
+
+.property-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.property-image-container:hover .property-image {
+    transform: scale(1.1);
+}
+
+/* Status Badge */
+.status-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: white;
+    z-index: 1;
+}
+
+.status-badge.available {
+    background-color: var(--success-color);
+}
+
+.status-badge.occupied {
+    background-color: var(--danger-color);
+}
+
+/* Property Details */
+.property-details {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.property-details h3 {
+    margin: 0 0 10px;
+    color: var(--text-primary);
+    font-size: 1.25rem;
+}
+
+.property-description {
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.property-info {
+    margin-bottom: 20px;
+}
+
+.price {
+    font-size: 1.25rem;
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Buttons */
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+.view-details,
+.view-details-edit,
+.delete-button,
+.reset-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+}
+
+.view-details {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.view-details-edit {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.delete-button {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.reset-button {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Button Hover Effects */
+.view-details:hover,
+.view-details-edit:hover,
+.delete-button:hover,
+.reset-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Property Actions */
+.property-actions {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.warning-icon {
+    color: var(--danger-color);
+    font-size: 1.5rem;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-light-brown {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-light-brown:hover {
+    background-color: #6a2e12;
+}
+
+/* No Properties Message */
+.no-properties {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+.no-properties i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 1800px) {
+    .property-list {
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 1440px;
+    }
+}
+
+@media (max-width: 1440px) {
+    .property-list {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 1140px;
+    }
+}
+
+@media (max-width: 1140px) {
+    .property-list {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 768px;
+    }
+}
+
+@media (max-width: 768px) {
+    .search-input-group {
+        flex-direction: column;
+    }
+
+    .search-wrapper,
+    .filter-wrapper {
+        flex: 1;
+        width: 100%;
+    }
+
+    .button-container {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .property-actions,
+    .admin-actions {
+        flex-direction: column;
+    }
+
+    .view-details,
+    .view-details-edit,
+    .delete-button,
+    .reset-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .property-list {
+        grid-template-columns: 1fr;
+        padding: 10px;
+    }
+
+    .property-card {
+        max-width: 100%;
+    }
+
+    .search-filter-container {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .property-details {
+        padding: 15px;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

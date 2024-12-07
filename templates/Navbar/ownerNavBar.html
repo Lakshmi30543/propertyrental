@@ -1,0 +1,31 @@
+{% load static %}
+<header>
+    <div class="logo">
+        <a href="{% url 'ownerapp:ownerhomepage' %}">
+            <img src="{% static 'images/logo.png' %}" alt="PS6 Logo">
+        </a>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="{% url 'ownerapp:ownerhomepage' %}">Home</a></li>
+            <li><a href="{% url 'ownerapp:property_list'  %}">My Properties</a></li>
+            <li><a href="{% url 'ownerapp:upload_property'  %}">Upload Property</a></li> <!-- Changed to use hyphen -->
+            <li><a href="{% url 'ownerapp:rental_contract' %}">Rental Contracts</a></li> <!-- Changed to use hyphen -->
+            <li><a href="{% url 'ownerapp:owner_messages' %}">Messages</a></li> <!-- Changed to use hyphen -->
+            <li><a href="{% url 'ownerapp:owner_profile' %}">Profile</a></li>
+            <li><a href="{% url 'ownerapp:chatbot' %}">Chat Bot</a></li>
+            <li><a href="{% url 'ownerapp:about_us' %}">About Us</a></li>
+        </ul>
+    </nav>
+    <div class="auth-buttons">
+        {% if user.is_authenticated %}
+            <span class="welcome-message">Welcome {{ user.username }}</span>
+            <form action="{% url 'adminapp:logout_view' %}" method="POST" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'ownerapp:login_or_register' %}" class="login-btn">Login/Register</a>
+        {% endif %}
+    </div>
+</header>

@@ -1,0 +1,332 @@
+{% include 'Navbar/tenentNavBar.html' %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property List</title>
+    <link rel="stylesheet" href="{% static 'css/tenentApp/property_list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Search and Filter Styles */
+        .search-filter-container {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input-group input[type="text"] {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .search-input-group select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+        }
+
+        .apply-button, .reset-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .apply-button {
+            background-color: #E17055;
+            color: white;
+        }
+
+        .reset-button {
+            background-color: #636e72;
+            color: white;
+            text-decoration: none;
+        }
+
+        .apply-button:hover, .reset-button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Property List Styles */
+        .property-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .property-image-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .property-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .property-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 2;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .status-badge.available {
+            background-color: #28a745;
+        }
+
+        .status-badge.not-available {
+            background-color: #dc3545;
+        }
+
+        .property-details {
+            padding: 20px;
+        }
+
+        .property-title {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            color: #2d3436;
+        }
+
+        .property-description {
+            color: #636e72;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .property-price {
+            color: #2d3436;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .view-details {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #E17055;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .view-details:hover {
+            background-color: #d65d45;
+            transform: translateY(-2px);
+        }
+
+        .no-properties {
+            text-align: center;
+            padding: 40px;
+            color: #636e72;
+            grid-column: 1 / -1;
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-input-group {
+                flex-direction: column;
+            }
+
+            .search-input-group input[type="text"],
+            .search-input-group select,
+            .apply-button,
+            .reset-button {
+                width: 100%;
+            }
+
+            .property-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Search and Filter Section -->
+<div class="search-filter-container">
+    <form method="GET" action="{% url 'tenentapp:property_list' %}">
+        <div class="search-input-group">
+            <input type="text" name="search" placeholder="Search properties..." value="{{ request.GET.search }}">
+            <select name="filter" id="filter">
+                <option value="">Sort by</option>
+                <option value="price_asc" {% if request.GET.filter == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_desc" {% if request.GET.filter == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+            </select>
+            <button type="submit" class="apply-button">Apply</button>
+            <a href="{% url 'tenentapp:property_list' %}?reset=true" class="reset-button">Reset</a>
+        </div>
+    </form>
+</div>
+
+<!-- Property List Section -->
+<div class="property-list">
+    {% for property in properties %}
+        <div class="property-card">
+            <div class="property-image-container">
+                <img src="{{ property.image.url }}" alt="{{ property.title }}" class="property-image">
+                <div class="property-status">
+                    <span class="status-badge {% if property.occupancy_status == 'Available' %}available{% else %}not-available{% endif %}">
+                        {{ property.occupancy_status }}
+                    </span>
+                </div>
+            </div>
+            <div class="property-details">
+                <h3 class="property-title">{{ property.title }}</h3>
+                <p class="property-description">{{ property.overview|truncatewords:20 }}</p>
+                <p class="property-price"><strong>₹{{ property.price }}</strong></p>
+                <a href="{% url 'tenentapp:property_detail' property.pk %}" class="view-details">View Details</a>
+            </div>
+        </div>
+    {% empty %}
+        <div class="no-properties">
+            <i class="fas fa-home"></i>
+            <p>No properties found.</p>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate property cards on load
+    const cards = document.querySelectorAll('.property-card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.animation = `fadeIn 0.5s ease forwards`;
+        }, index * 100);
+    });
+
+    // Add ripple effect to buttons
+    const buttons = document.querySelectorAll('.apply-button, .reset-button, .view-details');
+    buttons.forEach(button => {
+        button.addEventListener('click', createRipple);
+    });
+
+    // Smooth scroll for filter changes
+    document.querySelector('select[name="filter"]').addEventListener('change', function() {
+        window.scrollTo({
+            top: document.querySelector('.property-list').offsetTop - 100,
+            behavior: 'smooth'
+        });
+    });
+
+    // Add hover effect for property cards
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px)';
+        });
+
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+
+function createRipple(event) {
+    const button = event.currentTarget;
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    ripple.style.width = ripple.style.height = `${diameter}px`;
+
+    const rect = button.getBoundingClientRect();
+    ripple.style.left = `${event.clientX - rect.left - diameter / 2}px`;
+    ripple.style.top = `${event.clientY - rect.top - diameter / 2}px`;
+
+    button.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+}
+
+// Add smooth scroll for search submit
+document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    this.submit();
+    window.scrollTo({
+        top: document.querySelector('.property-list').offsetTop - 100,
+        behavior: 'smooth'
+    });
+});
+
+// Add loading animation for search
+document.querySelector('.apply-button').addEventListener('click', function() {
+    this.classList.add('loading');
+    setTimeout(() => this.classList.remove('loading'), 1000);
+});
+</script>
+
+</body>
+</html>

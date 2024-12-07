@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Property Inquiry</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        h2 {
+            font-weight: 700; /* Make it bold */
+            font-size: 2rem;  /* Set the size to make it more prominent */
+            color: #2c3e50;   /* Darker color for better readability */
+            margin-bottom: 20px;
+        }
+
+        .property-info {
+            margin-bottom: 20px;
+        }
+
+        .property-info img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        body {
+            line-height: 1.6;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .property-info p {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .property-info h3 {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .message-container {
+            margin-top: 30px;
+        }
+
+        .message-container p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Optional: Add styling to improve readability */
+        .property-info p, .message-container p {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h2>Inquiry about {{ property.title }}</h2>
+
+    <div class="property-info">
+        <p><strong>Property Title:</strong> {{ property.title }}</p>
+        <p><strong>Description:</strong> {{ property.description }}</p>
+        <p><strong>Location:</strong> {{ property.location }}</p>
+        <p><strong>Price:</strong> ${{ property.price }}</p>
+        <img src="{{ property.image.url }}" alt="Image of {{ property.title }}">
+    </div>
+
+    <div class="message-container">
+        <h3>Message from {{ name }} ({{ email }}):</h3>
+        <p>{{ message }}</p>
+    </div>
+</body>
+</html>

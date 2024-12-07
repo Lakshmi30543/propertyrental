@@ -1,0 +1,43 @@
+{% load static %}
+<header>
+    <div class="logo">
+        <a href="{% url 'tenentapp:tenenthomepage' %}">
+            <img src="{% static 'images/logo.png' %}" alt="PS6 Logo">
+        </a>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="{% url 'tenentapp:tenenthomepage' %}">Home</a></li>
+            <li><a href="{% url 'tenentapp:property_list' %}">Find Properties</a></li>
+            <li><a href="{% url 'tenentapp:tenant_messages' %}">Messages</a></li>
+            <li><a href="{% url 'tenentapp:tenent_profile' %}">Profile</a></li>
+            <li><a href="{% url 'tenentapp:chatbot_view' %}">Chat Bot</a></li>
+            <li><a href="{% url 'tenentapp:about_us' %}">About Us</a></li>
+
+        </ul>
+    </nav>
+    <div class="right-container">
+        <div class="auth-buttons">
+            {% if user.is_authenticated %}
+                <span class="welcome-message">Welcome {{ user.username }}</span>
+                <form action="{% url 'adminapp:logout_view' %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            {% endif %}
+        </div>
+
+
+        {% if not user.is_authenticated %}
+            <div class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn">
+                Login/Register <span class="dropdown-icon">&#9662;</span>
+            </a>
+                <div class="dropdown-content">
+                    <a href="{% url 'adminapp:login_or_register' %}">Tenant</a>
+                    <a href="{% url 'ownerapp:login_or_register1' %}">Owner</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</header>

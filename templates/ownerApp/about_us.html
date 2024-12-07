@@ -1,0 +1,134 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - PS6 Property Management</title>
+     <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ownerApp/about_us.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+<body>
+
+  {% block body %}
+    {% include 'Navbar/ownerNavBar.html' %}
+    <div class="container">
+        <h1>About Us</h1>
+
+        <!-- About Section -->
+        <div class="about-section">
+            <h2>Who We Are</h2>
+            <p>Welcome to <strong>Property Sales and Rental Management Platform</strong>, your trusted partner in managing all things related to property sales and rentals. Whether you're a property owner or a tenant, our platform is designed to provide seamless, efficient, and secure solutions for your needs.</p>
+
+            <h2>Our Vision</h2>
+            <p>Our vision is to revolutionize property management by creating an integrated, user-friendly platform that caters to both property owners and tenants. We aim to simplify property transactions, document management, and communication between all parties involved.</p>
+
+            <h2>Our Mission</h2>
+            <p>We are dedicated to offering the best property management services by:</p>
+            <ul>
+                <li>Providing owners with the tools to upload, manage, and lease properties easily.</li>
+                <li>Giving tenants a transparent and hassle-free experience in searching and applying for properties.</li>
+                <li>Ensuring secure document handling and payment processing for all users.</li>
+            </ul>
+
+            <h2>What We Offer</h2>
+            <ul>
+                <li><strong>Property Management:</strong> Owners can easily list, edit, and manage their properties, while tenants can search for properties based on their needs.</li>
+                <li><strong>Document Management:</strong> Secure handling of rental agreements, sales contracts, and other important documents.</li>
+                <li><strong>Tenant/Owner Communication:</strong> A built-in messaging system to ensure smooth communication between tenants and property owners.</li>
+                <li><strong>Rental and Payment Management:</strong> Track payments, lease agreements, and manage your rental contracts with ease.</li>
+            </ul>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2>Frequently Asked Questions (FAQs)</h2>
+
+            <details>
+                <summary>1. How do I upload a property on the platform?</summary>
+                <p>Uploading a property is simple for owners. Navigate to the "Upload Property" section in your owner dashboard, fill out the necessary fields such as property title, images, price, and description, and submit. Your property will be listed after review.</p>
+            </details>
+
+            <details>
+                <summary>2. Can tenants apply for properties online?</summary>
+                <p>Yes, tenants can easily apply online. Tenants can browse through available properties, view details, and submit an application with just a few clicks. You can track the status of your application through your tenant dashboard.</p>
+            </details>
+
+            <details>
+                <summary>3. Is my personal data secure on this platform?</summary>
+                <p>Yes, your data is secure. We use encryption and industry-standard security measures to protect your personal and payment information. Our privacy policy ensures that your data is only used for legitimate purposes and is not shared without your consent.</p>
+            </details>
+
+            <details>
+                <summary>4. How do I manage rental agreements on the platform?</summary>
+                <p>Managing agreements is straightforward. Once a rental agreement is drafted, both the tenant and the owner can view and sign it digitally. The signed agreements are stored securely in the document management section of your profile.</p>
+            </details>
+
+            <details>
+                <summary>5. What happens if I forget my password?</summary>
+                <p>You can easily reset it. If you forget your password, click on the "Forgot Password?" link on the login page, and follow the instructions to reset it via email.</p>
+            </details>
+        </div>
+
+        <!-- Team Section -->
+<div class="team-section">
+    <h2 style="text-align: center; font-size: 2rem;">Meet the Team</h2>
+    <div class="team-container">
+        <div class="team-member">
+            <img src="{% static 'images/ownerApp/about_us/team1.png' %}" alt="Team Member 1" class="profile-pic">
+            <h3>K V PANEENDRA</h3>
+            <p>Backend Developer & Frontend Developer</p>
+            <div class="social-links">
+                <a href="https://github.com/phanee27" target="_blank" class="social-icon">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/phanee27" target="_blank" class="social-icon">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://x.com/phanee2006" target="_blank" class="social-icon">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+            </div>
+        </div>
+        <div class="team-member">
+            <img src="{% static 'images/ownerApp/about_us/team2.jpg' %}" alt="Team Member 2" class="profile-pic">
+            <h3>I SURYA PRAKASH</h3>
+            <p>Frontend Developer & Backend Developer</p>
+            <div class="social-links">
+                <a href="https://github.com/isuryaprakashh" target="_blank" class="social-icon">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/isuryaprakashh" target="_blank" class="social-icon">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://x.com/isuryaprakashh" target="_blank" class="social-icon">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+            </div>
+        </div>
+        <div class="team-member">
+            <img src="{% static 'images/ownerApp/about_us/team3.jpg' %}" alt="Team Member 3" class="profile-pic">
+            <h3>P LAKSHMI</h3>
+            <p>UI/UX Designer</p>
+            <div class="social-links">
+                <a href="https://github.com/Lakshmi30543" target="_blank" class="social-icon">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/lakshmi-ponduri-01015b338/" target="_blank" class="social-icon">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://x.com/emgbilaeh?t=Lt85Tb1MtEXXOpMLW1M5Fw&s=08" target="_blank" class="social-icon">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+    <footer>
+        &copy; 2024 - Property Sales and Rental Management Platform
+    </footer>
+    {% endblock %}
+
+</body>
+</html>

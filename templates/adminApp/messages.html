@@ -1,0 +1,198 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Messages and Replies</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 30px;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h2, h4 {
+            color: #4a4a4a;
+        }
+
+        .table {
+            margin-top: 15px;
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        .table th, .table td {
+            text-align: center;
+            padding: 12px;
+        }
+
+        .table th {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+        .table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        .form-select {
+            max-width: 400px;
+            margin-bottom: 15px;
+        }
+
+        .replies-section {
+            margin-top: 40px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #999;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+{% include 'Navbar/adminNavBar.html' %}
+    <div class="container">
+       <center> <h2 class="my-4">Admin - Messages and Replies</h2></center><br>
+
+
+        <!-- Messages Table -->
+      <center>  <h3>All Messages</h3></center>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tenant</th>
+                    <th>Owner</th>
+                    <th>Property</th>
+                    <th>Content</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for message in messages %}
+                    <tr>
+                        <td>{{ message.tenant.username }}</td>
+                        <td>{{ message.owner.username }}</td>
+                        <td>{{ message.property.title }}</td>
+                        <td>{{ message.content }}</td>
+                        <td>{{ message.timestamp }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">No messages found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Replies Section -->
+        <div class="replies-section">
+           <center> <h3>Replies</h3></center>
+            <form method="get" class="mb-3">
+                <label for="owner_id" class="form-label">Filter by Owner:</label>
+                <select name="owner_id" id="owner_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- Select Owner --</option>
+                    {% for owner in owners %}
+                        <option value="{{ owner.id }}" {% if selected_owner and selected_owner.id == owner.id %}selected{% endif %}>
+                            {{ owner.username }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+
+            {% if replies %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Message</th>
+                            <th>Owner</th>
+                            <th>Tenant</th>
+                            <th>Content</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reply in replies %}
+                            <tr>
+                                <td>{{ reply.message.content }}</td>
+                                <td>
+                                    {% if reply.owner %}
+                                        {{ reply.owner.username }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reply.tenant %}
+                                        {{ reply.tenant.username }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>{{ reply.content }}</td>
+                                <td>{{ reply.timestamp }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5">No replies found for this owner.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Select an owner to view their replies.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Highlight rows on hover
+        document.addEventListener("DOMContentLoaded", function () {
+            const rows = document.querySelectorAll("table tbody tr");
+            rows.forEach(row => {
+                row.addEventListener("mouseover", () => {
+                    row.style.backgroundColor = "#f1f1f1";
+                });
+                row.addEventListener("mouseout", () => {
+                    row.style.backgroundColor = "";
+                });
+            });
+        });
+
+        // Direct form submission when owner is selected without confirmation
+        const ownerDropdown = document.getElementById("owner_id");
+        ownerDropdown?.addEventListener("change", function () {
+            if (this.value) {
+                this.form.submit(); // Submit the form directly without confirmation
+            }
+        });
+    </script>
+</body>
+</html>

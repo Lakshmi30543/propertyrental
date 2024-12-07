@@ -1,0 +1,500 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(45deg, #EE1133, #FF6347);
+            --gradient-secondary: linear-gradient(45deg, #FF6347, #EE1133);
+            --gradient-dark: linear-gradient(45deg, #4A4A4A, #333333);
+            --shadow-elevation: 0 10px 20px rgba(238, 17, 51, 0.15);
+            --animation-timing: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --red-primary: #EE1133;
+            --text-dark: #4A4A4A;
+            --background-light: #f9f9f9;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-light);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .chat-container {
+            max-width: 100%;
+            height: calc(100vh - 60px);
+            background: rgba(249, 249, 249, 0.95);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.8s var(--animation-timing);
+        }
+
+        .chat-header {
+            background: var(--gradient-primary);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInDown 0.8s var(--animation-timing);
+        }
+
+        .chat-header .logo {
+            font-size: 2rem;
+            color: #fff;
+            animation: pulse 2s infinite;
+            text-shadow: 0 2px 10px rgba(238, 17, 51, 0.3);
+        }
+
+        .chat-header h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(238, 17, 51, 0.3);
+            background: linear-gradient(45deg, #fff, rgba(255, 255, 255, 0.8));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .messages {
+            height: calc(100% - 180px);
+            padding: 2rem;
+            overflow-y: auto;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(238, 17, 51, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(255, 99, 71, 0.1) 0%, transparent 50%);
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            max-width: 80%;
+            margin: 1.5rem 0;
+            position: relative;
+            animation: messageSlide 0.5s var(--animation-timing);
+        }
+
+        .user-message {
+            margin-left: auto;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 20px 20px 5px 20px;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-elevation);
+            transform-origin: right bottom;
+        }
+
+        .bot-message {
+            margin-right: auto;
+            background: white;
+            color: #333;
+            border-radius: 20px 20px 20px 5px;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-elevation);
+            transform-origin: left bottom;
+            border-left: 4px solid var(--red-primary);
+        }
+
+        .message-actions {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            background: rgba(238, 17, 51, 0.9);
+            border-radius: 20px;
+            padding: 5px 10px;
+            display: flex;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .action-button {
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: scale(1.2);
+        }
+
+        .typing-indicator {
+            background: white;
+            padding: 1rem;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-elevation);
+            animation: slideIn 0.3s var(--animation-timing);
+        }
+
+        .typing-indicator::before {
+            content: '\f4ad';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--red-primary);
+            font-size: 1.2rem;
+            animation: bounce 1s infinite;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            animation: typingBounce 1s infinite var(--animation-timing);
+        }
+
+        .show-more-button {
+            background: none;
+            border: none;
+            color: var(--red-primary);
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            margin-top: 8px;
+            cursor: pointer;
+            display: block;
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            font-weight: 500;
+            background: rgba(238, 17, 51, 0.1);
+        }
+
+        .show-more-button:hover {
+            background: rgba(238, 17, 51, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .show-more-button:active {
+            transform: translateY(0);
+        }
+
+        #chatForm {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: white;
+            display: flex;
+            gap: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.8s var(--animation-timing);
+        }
+
+        #userMessage {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            font-size: 1rem;
+            background: #f0f2f5;
+            transition: all 0.3s ease;
+        }
+
+        #userMessage:focus {
+            outline: none;
+            border-color: var(--red-primary);
+            background: white;
+            box-shadow: 0 0 0 5px rgba(238, 17, 51, 0.1);
+        }
+
+        button[type="submit"] {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+        }
+
+        button[type="submit"]:hover::before {
+            transform: translateX(100%);
+            transition: transform 0.8s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes messageSlide {
+            from { transform: translateY(20px) scale(0.8); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes typingBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: var(--gradient-primary);
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .message { max-width: 90%; }
+            .chat-header h1 { font-size: 1.2rem; }
+            #chatForm { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    {% include 'Navbar/tenentNavBar.html' %}
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <i class="fas fa-robot logo"></i>
+            <h1>AI Assistant</h1>
+        </div>
+
+        <div class="messages" id="chatMessages"></div>
+
+        <form id="chatForm">
+            <input
+                type="text"
+                id="userMessage"
+                placeholder="Ask me anything..."
+                required
+                autocomplete="off"
+            >
+            <button type="submit">
+                <i class="fas fa-paper-plane"></i>
+                Send
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('chatForm');
+        const messagesDiv = document.getElementById('chatMessages');
+        const userMessageInput = document.getElementById('userMessage');
+        const submitButton = form.querySelector('button[type="submit"]');
+        let editingMessage = null;
+
+        function truncateText(text) {
+            if (text.length <= 200) {
+                return { text, needsTruncation: false };
+            }
+            return {
+                text: text.substring(0, 200) + '...',
+                fullText: text,
+                needsTruncation: true
+            };
+        }
+
+        function createMessageElement(message, isUser = true) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+
+            if (!isUser) {
+                const truncated = truncateText(message);
+                const textSpan = document.createElement('span');
+                textSpan.textContent = truncated.text;
+                contentDiv.appendChild(textSpan);
+
+                if (truncated.needsTruncation) {
+                    const showMoreButton = document.createElement('button');
+                    showMoreButton.className = 'show-more-button';
+                    showMoreButton.textContent = 'Show more';
+                    let isExpanded = false;
+
+                    showMoreButton.onclick = () => {
+                        if (isExpanded) {
+                            textSpan.textContent = truncated.text;
+                            showMoreButton.textContent = 'Show more';
+                            showMoreButton.classList.remove('expanded');
+                        } else {
+                            textSpan.textContent = truncated.fullText;
+                            showMoreButton.textContent = 'Show less';
+                            showMoreButton.classList.add('expanded');
+                        }
+                        isExpanded = !isExpanded;
+                    };
+
+                    contentDiv.appendChild(showMoreButton);
+                }
+            } else {
+                contentDiv.textContent = message;
+            }
+
+            messageDiv.appendChild(contentDiv);
+
+            if (isUser) {
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'message-actions';
+
+                const editButton = document.createElement('button');
+                editButton.className = 'action-button';
+                editButton.innerHTML = '<i class="fas fa-edit"></i>';
+                editButton.onclick = () => editMessage(messageDiv, message);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'action-button';
+                deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                deleteButton.onclick = () => deleteMessageAndResponses(messageDiv);
+
+                actionsDiv.appendChild(editButton);
+                actionsDiv.appendChild(deleteButton);
+                messageDiv.appendChild(actionsDiv);
+            }
+
+            return messageDiv;
+        }
+
+        function addTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <i class="fas fa-robot"></i>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            messagesDiv.appendChild(typingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            return typingDiv;
+        }
+
+        function deleteMessageAndResponses(messageDiv) {
+            let nextElement = messageDiv.nextElementSibling;
+            messageDiv.remove();
+            while (nextElement) {
+                const temp = nextElement.nextElementSibling;
+                nextElement.remove();
+                nextElement = temp;
+            }
+        }
+
+        function editMessage(messageDiv, originalMessage) {
+            userMessageInput.value = originalMessage;
+            userMessageInput.focus();
+            editingMessage = messageDiv;
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const userInput = userMessageInput.value.trim();
+
+            if (!userInput) return;
+
+            userMessageInput.disabled = true;
+            submitButton.disabled = true;
+
+            if (editingMessage) {
+                editingMessage.querySelector('.message-content').textContent = userInput;
+                let nextElement = editingMessage.nextElementSibling;
+                while (nextElement) {
+                    const temp = nextElement.nextElementSibling;
+                    nextElement.remove();
+                    nextElement = temp;
+                }
+                editingMessage = null;
+            } else {
+                const userMessageDiv = createMessageElement(userInput, true);
+                messagesDiv.appendChild(userMessageDiv);
+            }
+
+            userMessageInput.value = '';
+            const typingIndicator = addTypingIndicator();
+
+            try {
+                const response = await fetch('', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: new URLSearchParams({ message: userInput })
+                });
+
+                const data = await response.json();
+                typingIndicator.remove();
+
+                const botMessageDiv = createMessageElement(data.response, false);
+                messagesDiv.appendChild(botMessageDiv);
+            } catch (error) {
+                console.error('Error:', error);
+                typingIndicator.remove();
+                const errorDiv = createMessageElement('Sorry, something went wrong. Please try again.', false);
+                errorDiv.classList.add('error-message');
+                messagesDiv.appendChild(errorDiv);
+            } finally {
+                userMessageInput.disabled = false;
+                submitButton.disabled = false;
+                userMessageInput.focus();
+            }
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+    </script>
+</body>
+</html>

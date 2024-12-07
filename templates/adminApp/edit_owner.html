@@ -1,0 +1,172 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Owner</title>
+    <link rel="stylesheet" href="{% static 'css/adminApp/edit_owner_card.css' %}">
+    <style>
+        /* General body and container styles */
+body {
+font-family: 'Georgia', serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 100%; /* Full width */
+    width: 100%; /* Full width */
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Page Header Styling */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #343a40; /* Dark Gray */
+}
+
+/* Navbar styles */
+.navbar {
+    background-color: #343a40; /* Dark Gray */
+    padding: 10px;
+    color: white;
+}
+
+.navbar a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+}
+
+/* Card styling for forms */
+.card {
+    padding: 20px;
+    border: 1px solid #ddd; /* Light Gray */
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Button Styling */
+.btn {
+    background-color: #a0522d; /* Warm Brown */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px; /* Squircles */
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.2s ease;
+}
+
+.btn.cancel {
+    background-color: #6c757d; /* Gray */
+}
+
+.btn:hover {
+    background-color: #8a3f1c; /* Darker Warm Brown for hover */
+    opacity: 0.9;
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Input and form group styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #343a40; /* Dark Gray */
+}
+
+input[type="text"], input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc; /* Light Gray border */
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-top: 5px;
+}
+
+/* Error and Success message styling */
+.error {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.success {
+    color: green;
+    margin-bottom: 10px;
+}
+
+/* Message container styling */
+.message-container {
+    margin-bottom: 20px;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 22px;
+    }
+
+    .container {
+        padding: 15px;
+        margin: 20px auto;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 12px;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Edit Owner</h1>
+
+        <!-- Display messages (success, error) -->
+        {% if messages %}
+            <div class="message-container">
+                {% for message in messages %}
+                    <div class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="card">
+            <form method="POST" action="{% url 'adminapp:edit_owner' owner.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" value="{{ owner.username }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="{{ owner.email }}" required>
+                </div>
+                <button type="submit" class="btn">Save</button>
+                <a href="{% url 'adminapp:dashboard' %}" class="btn cancel">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
